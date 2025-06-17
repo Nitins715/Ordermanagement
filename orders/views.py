@@ -3,32 +3,57 @@ from neworder.models import NewOrder
 from neworder.forms import NewOrderForm 
 from django.utils.dateparse import parse_date
 
+
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.decorators import login_required
+
+def user_login(request):
+    if request.method == "POST":
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('order_list')  # replace with your home page name
+    else:
+        form = AuthenticationForm()
+    return render(request, 'login.html', {'form': form})
+
+from django.contrib.auth import logout
+
+def user_logout(request):
+    logout(request)
+    return redirect('login')
+
+
+@login_required
 def order_list(request):
     orders = NewOrder.objects.all()
-    
+
     ref = request.GET.get('ref')
-    date_str = request.GET.get('date')
+    from_date_str = request.GET.get('from_date')
+    to_date_str = request.GET.get('to_date')
     status = request.GET.get('status')
 
     if ref:
         orders = orders.filter(internal_ref_no__icontains=ref)
 
-    if date_str:
-        date = parse_date(date_str)
-        if date:
-            orders = orders.filter(order_date__date=date)
+    from_date = parse_date(from_date_str) if from_date_str else None
+    to_date = parse_date(to_date_str) if to_date_str else None
+
+    if from_date:
+        orders = orders.filter(order_date__date__gte=from_date)
+    if to_date:
+        orders = orders.filter(order_date__date__lte=to_date)
 
     if status == 'paid':
-        orders = orders.filter(payment_method__isnull=False).exclude(payment_date__isnull=True)
+        orders = orders.filter(payment_method__isnull=False, payment_date__isnull=False)
     elif status == 'pending':
-        orders = orders.filter(payment_method__isnull=False, payment_date__isnull=True)
-    elif status == 'overdue':
-        orders = orders.filter(payment_method__isnull=True, payment_date__isnull=True)
+        orders = orders.exclude(payment_method__isnull=False, payment_date__isnull=False)
 
     return render(request, 'order_list.html', {'orders': orders})
 
-
-
+@login_required
 def create_order(request):
     if request.method == 'POST':
         form = NewOrderForm(request.POST)
@@ -41,6 +66,7 @@ def create_order(request):
         form = NewOrderForm()
     return render(request, 'neworder_form.html', {'form': form})
 
+@login_required
 def edit_order(request, pk):
     order = get_object_or_404(NewOrder, pk=pk)
     if request.method == 'POST':
@@ -52,9 +78,11 @@ def edit_order(request, pk):
         form = NewOrderForm(instance=order)
     return render(request, 'edit_order.html', {'form': form})
 
+@login_required
 def delete_order(request, pk):
     order = get_object_or_404(NewOrder, pk=pk)
     if request.method == 'POST':
         order.delete()
         return redirect('order_list')
     return render(request, 'confirm_delete.html', {'order': order})
+

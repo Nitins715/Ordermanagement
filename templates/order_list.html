@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Orders List</title>
   <style>
     body {
@@ -20,26 +20,36 @@
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
-    .container-head{
-      display:flex;
+    .container-head {
+      display: flex;
       justify-content: space-between;
-      align-items: center; 
+      align-items: center;
     }
-    .New-btn {
-        background-color: white;
-        color: black;
-        border: 2px solid #04AA6D;
-        transition-duration: 0.4s;
-        font-size: 20px;
-        padding: 10px 20px;
-        border-radius: 5px; 
-        cursor: pointer;
-        text-decoration: none;
-      }
-    .New-btn:hover {
-        background-color: #04AA6D;
-        color: white;
-      }
+    .button-group {
+      display: flex;
+      gap: 10px;
+    }
+    .action-btn {
+      background-color: white;
+      color: black;
+      border: 2px solid #04AA6D;
+      transition-duration: 0.4s;
+      font-size: 16px;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .action-btn:hover {
+      background-color: #04AA6D;
+      color: white;
+    }
+    .logout-btn {
+      border-color: #dc3545;
+    }
+    .logout-btn:hover {
+      background-color: #dc3545;
+    }
     h1 {
       font-size: 24px;
       margin-bottom: 10px;
@@ -100,27 +110,29 @@
         <h1>All Orders</h1>
         <p class="subtitle">Manage and track all your orders in one place</p>
       </div>
-      <div>
-        <a href="{% url 'create_order'%}" class="New-btn">New Order +</a>
+      <div class="button-group">
+        <a href="{% url 'create_order' %}" class="action-btn">New Order +</a>
+        <form action="{% url 'logout' %}" method="post" style="display: inline;">
+          {% csrf_token %}
+          <button type="submit" class="action-btn logout-btn">Logout</button>
+        </form>
       </div>
     </div>
+
     <form method="GET" style="margin: 20px 0; display: flex; gap: 20px; align-items: center;">
-
-      <input type="text"name="ref" placeholder="Search by Reference No" value="{{ request.GET.ref }}" style="padding: 8px; border-radius: 5px; border: 1px solid #ccc; width: 200px;"/>
-
-      <input type="date" name="date" value="{{ request.GET.date }}" style="padding: 8px; border-radius: 5px; border: 1px solid #ccc;"/>
-
+      <input type="text" name="ref" placeholder="Search by Reference No" value="{{ request.GET.ref }}" style="padding: 8px; border-radius: 5px; border: 1px solid #ccc; width: 200px;" />
+      <input type="date" name="from_date" value="{{ request.GET.from_date }}" placeholder="From Date" style="padding: 8px; border-radius: 5px; border: 1px solid #ccc;" />
+      <span>To</span>
+      <input type="date" name="to_date" value="{{ request.GET.to_date }}" placeholder="To Date" style="padding: 8px; border-radius: 5px; border: 1px solid #ccc;" />
       <select name="status" style="padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
         <option value="">All Statuses</option>
         <option value="paid" {% if request.GET.status == 'paid' %}selected{% endif %}>Paid</option>
         <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>Pending</option>
-        <option value="overdue" {% if request.GET.status == 'overdue' %}selected{% endif %}>Overdue</option>
       </select>
-
       <button type="submit" style="padding: 8px 16px; background-color: #04AA6D; color: white; border: none; border-radius: 5px; cursor: pointer;">Filter</button>
-      
-      <a href="{% url 'order_list' %}" style="padding: 8px 12px; text-decoration: none; color: #3498db;">Reset</a></form>
-    
+      <a href="{% url 'order_list' %}" style="padding: 8px 12px; text-decoration: none; color: #3498db;">Reset</a>
+    </form>
+
     <table>
       <thead>
         <tr>
@@ -139,26 +151,24 @@
       <tbody>
         {% for order in orders %}
         <tr>
-          <td><code>{{ order.internal_ref_no |truncatechars:8}}</code></td>
+          <td><code>{{ order.internal_ref_no | truncatechars:8 }}</code></td>
           <td>{{ order.order_date|date:"d-m y" }}</td>
           <td>{{ order.order_type|title }}</td>
-          <td>{{ order.name_or_company |truncatechars:12 }}</td>
-          <td>{{ order.contact_number |truncatechars:14 }}</td>
+          <td>{{ order.name_or_company | truncatechars:12 }}</td>
+          <td>{{ order.contact_number | truncatechars:14 }}</td>
           <td>{{ order.skip_size }}</td>
           <td>{{ order.quantity }}</td>
           <td>£{{ order.total_amount_with_vat }}</td>
           <td>
             {% if order.payment_method and order.payment_date %}
               <span class="badge paid">Paid</span>
-            {% elif order.payment_method and not order.payment_date %}
-              <span class="badge pending">Pending</span>
             {% else %}
-              <span class="badge overdue">Overdue</span>
+              <span class="badge pending">Pending</span>
             {% endif %}
           </td>
           <td>
             <a href="{% url 'edit_order' order.pk %}" class="btn">Edit</a>
-            <a href="{% url 'delete_order' order.pk %}"class="btn">Delete</a>
+            <a href="{% url 'delete_order' order.pk %}" class="btn">Delete</a>
           </td>
         </tr>
         {% empty %}

@@ -2,13 +2,16 @@ import os
 import dj_database_url
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent  # Removed one .parent
+BASE_DIR = Path(__file__).resolve().parent
 
 SECRET_KEY = 'django-insecure-94$3@a#f7*d_zx4g_!x(7j5k+=-ux+(g4@5uvuz&g+o7o%q8m3'
 
 DEBUG = True
 
 ALLOWED_HOSTS = ['.onrender.com', 'localhost','127.0.0.1']
+
+LOGIN_URL = '/login/'        
+LOGIN_REDIRECT_URL = '/'
 
 INSTALLED_APPS = [
     'neworder',
@@ -42,7 +45,7 @@ WSGI_APPLICATION = 'wsgi.application'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # Adjusted to use BASE_DIR
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -85,7 +88,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/London'
 
 USE_I18N = True
 

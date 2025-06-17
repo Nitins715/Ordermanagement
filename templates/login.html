@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Orders Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: 80px auto;
+      padding: 40px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h3 {
+      text-align: center;
+      font-weight: 600;
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .text-link {
+      text-decoration: none;
+      color: #007bff;
+      font-size: 14px;
+    }
+
+    .text-link:hover {
+      text-decoration: underline;
+    }
+
+    .text-danger {
+      color: red;
+      margin-top: 10px;
+    }
+
+    .text-success {
+      color: green;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        margin: 40px 20px;
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h3>Admin Login</h3>
+    <form method="POST" action="{% url 'login' %}">
+        {% csrf_token %}
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" placeholder="Enter username" required>
+
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Enter password" required>
+
+      <button type="submit">Login</button>
+
+      <div class="text-center" style="margin-top: 15px;">
+        <a href="/forgot-password" class="text-link">Forgot Password?</a>
+      </div>
+
+      <div class="text-danger text-center" style="display: none;" id="error-msg">
+        Invalid username or password
+      </div>
+
+      <div class="text-success text-center" style="display: none;" id="logout-msg">
+        You have been logged out
+      </div>
+    </form>
+  </div>
+
+</body>
+</html>
