@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orders List</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 20px;
+      width: fit-content;
+    }
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .container-head{
+      display:flex;
+      justify-content: space-between;
+      align-items: center; 
+    }
+    .New-btn {
+        background-color: white;
+        color: black;
+        border: 2px solid #04AA6D;
+        transition-duration: 0.4s;
+        font-size: 20px;
+        padding: 10px 20px;
+        border-radius: 5px; 
+        cursor: pointer;
+        text-decoration: none;
+      }
+    .New-btn:hover {
+        background-color: #04AA6D;
+        color: white;
+      }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+    p.subtitle {
+      color: #7f8c8d;
+      margin-bottom: 30px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+    }
+    th {
+      background: #f0f2f5;
+      font-weight: bold;
+      color: #34495e;
+    }
+    tbody tr {
+      border-bottom: 1px solid #e0e6ed;
+    }
+    tbody tr:hover {
+      background-color: #f9fbfc;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      font-size: 12px;
+      border-radius: 20px;
+      font-weight: bold;
+    }
+    .paid { background: #e0f9e0; color: #2e7d32; }
+    .pending { background: #fff3cd; color: #856404; }
+    .overdue { background: #fdecea; color: #c62828; }
+    .btn {
+      border: none;
+      background: none;
+      color: #3498db;
+      cursor: pointer;
+      padding: 4px 8px;
+      font-size: 14px;
+      text-decoration: none;
+    }
+    .btn:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="container-head">
+      <div>
+        <h1>All Orders</h1>
+        <p class="subtitle">Manage and track all your orders in one place</p>
+      </div>
+      <div>
+        <a href="{% url 'create_order'%}" class="New-btn">New Order +</a>
+      </div>
+    </div>
+    <form method="GET" style="margin: 20px 0; display: flex; gap: 20px; align-items: center;">
+
+      <input type="text"name="ref" placeholder="Search by Reference No" value="{{ request.GET.ref }}" style="padding: 8px; border-radius: 5px; border: 1px solid #ccc; width: 200px;"/>
+
+      <input type="date" name="date" value="{{ request.GET.date }}" style="padding: 8px; border-radius: 5px; border: 1px solid #ccc;"/>
+
+      <select name="status" style="padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+        <option value="">All Statuses</option>
+        <option value="paid" {% if request.GET.status == 'paid' %}selected{% endif %}>Paid</option>
+        <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>Pending</option>
+        <option value="overdue" {% if request.GET.status == 'overdue' %}selected{% endif %}>Overdue</option>
+      </select>
+
+      <button type="submit" style="padding: 8px 16px; background-color: #04AA6D; color: white; border: none; border-radius: 5px; cursor: pointer;">Filter</button>
+      
+      <a href="{% url 'order_list' %}" style="padding: 8px 12px; text-decoration: none; color: #3498db;">Reset</a></form>
+    
+    <table>
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Order Date</th>
+          <th>Type</th>
+          <th>Name</th>
+          <th>Contact</th>
+          <th>Skip Size</th>
+          <th>Qty</th>
+          <th>Amount</th>
+          <th>Payment</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+        <tr>
+          <td><code>{{ order.internal_ref_no |truncatechars:8}}</code></td>
+          <td>{{ order.order_date|date:"d-m y" }}</td>
+          <td>{{ order.order_type|title }}</td>
+          <td>{{ order.name_or_company |truncatechars:12 }}</td>
+          <td>{{ order.contact_number |truncatechars:14 }}</td>
+          <td>{{ order.skip_size }}</td>
+          <td>{{ order.quantity }}</td>
+          <td>£{{ order.total_amount_with_vat }}</td>
+          <td>
+            {% if order.payment_method and order.payment_date %}
+              <span class="badge paid">Paid</span>
+            {% elif order.payment_method and not order.payment_date %}
+              <span class="badge pending">Pending</span>
+            {% else %}
+              <span class="badge overdue">Overdue</span>
+            {% endif %}
+          </td>
+          <td>
+            <a href="{% url 'edit_order' order.pk %}" class="btn">Edit</a>
+            <a href="{% url 'delete_order' order.pk %}"class="btn">Delete</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="11">No orders found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

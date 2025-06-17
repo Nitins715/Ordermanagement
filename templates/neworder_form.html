@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+      color: #2c3e50;
+    }
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+      color: #34495e;
+    }
+    p.subtitle {
+      color: #7f8c8d;
+      margin-bottom: 30px;
+    }
+    .form-section {
+      margin-bottom: 40px;
+      padding: 25px;
+      background: #f9fbfc;
+      border-left: 5px solid #8ecae6;
+      border-radius: 8px;
+    }
+    .form-section h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: #2a4d69;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .form-field {
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    label.required::after {
+      content: " *";
+      color: red;
+    }
+    input, select, textarea {
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+      background: #fff;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #8ecae6;
+      box-shadow: 0 0 5px rgba(142, 202, 230, 0.5);
+      outline: none;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 40px;
+    }
+    .form-actions {
+      text-align: center;
+      margin-top: 30px;
+      display: flex;
+      justify-content: space-around;
+    }
+    button {
+      padding: 12px 28px;
+      border: none;
+      border-radius: 6px;
+      background-color: #219ebc;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background-color: #126782;
+    }
+    button a{
+      text-decoration: none;
+    }
+    
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>{% if form.instance.pk %}Edit Order{% else %}New Order{% endif %}</h1>
+    <p class="subtitle">Complete required details(*)</p>
+    <form method="POST">
+      {% csrf_token %}
+
+      <div class="form-section">
+        <h2>Order Details</h2>
+        <div class="form-grid">
+          <div class="form-field"><label class="required">Internal Reference No</label>{{ form.internal_ref_no }}</div>
+          <div class="form-field"><label class="required">Order Date</label>{{ form.order_date }}</div>
+          <div class="form-field"><label class="required">Order Type</label>{{ form.order_type }}</div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2>Customer Information</h2>
+        <div class="form-grid">
+          <div class="form-field"><label class="required">Name or Company</label>{{ form.name_or_company }}</div>
+          <div class="form-field"><label class="required">Postcode</label>{{ form.postcode }}</div>
+          <div class="form-field"><label class="required">Address</label>{{ form.address }}</div>
+          <div class="form-field"><label class="required">Contact Number</label>{{ form.contact_number }}</div>
+          <div class="form-field"><label>Email</label>{{ form.email }}</div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2>Skip Information</h2>
+        <div class="form-grid">
+          <div class="form-field"><label class="required">Expected Collection Date</label>{{ form.expected_collection_date }}</div>
+          <div class="form-field"><label>Collection Date</label>{{ form.collection_date }}</div>
+          <div class="form-field"><label class="required">Skip Size</label>{{ form.skip_size }}</div>
+          <div class="form-field"><label class="required">Quantity</label>{{ form.quantity }}</div>
+          <div class="form-field"><label>Skip Number</label>{{ form.skip_number }}</div>
+          <div class="form-field"><label>Net Weight</label>{{ form.net_weight }}</div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2>Payment Information</h2>
+        <div class="form-grid">
+          <div class="form-field">Total Amount (with VAT)</label>{{ form.total_amount_with_vat }}</div>
+          <div class="form-field">Payment Method</label>{{ form.payment_method }}</div>
+          <div class="form-field"><label>Invoice/Card No</label>{{ form.inv_or_card_no }}</div>
+          <div class="form-field"><label>Payment Date</label>{{ form.payment_date }}</div>
+          <div class="form-field"><label>Extra Charge</label>{{ form.extra_charge }}</div>
+          <div class="form-field"><label>Extra Charge Waste</label>{{ form.extra_charge_waste }}</div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2>Fulfillment</h2>
+        <div class="form-grid">
+          <div class="form-field"><label>Fulfillment Date</label>{{ form.fulfillment_date }}</div>
+          <div class="form-field"><label>Days Hired</label>{{ form.days_hired }}</div>
+          <div class="form-field"><label>Exchange/Delivery Ref No</label>{{ form.exchange_delivery_ref_no }}</div>
+          <div class="form-field"><label>Sorted Date</label>{{ form.sorted_date }}</div>
+          <div class="form-field"><label>Driver</label>{{ form.driver }}</div>
+          <div class="form-field"><label>Remarks</label>{{ form.remark }}</div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button>
+          <a href="{% url 'order_list' %}">Cancel</a>
+        </button>
+        <button type="submit">Save</button>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

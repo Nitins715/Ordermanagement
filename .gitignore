@@ -1,0 +1,9 @@
+# DON'T ignore db.sqlite3
+# Remove this if it exists:
+# db.sqlite3
+
+venv/
+*.pyc
+__pycache__/
+/staticfiles/
+/.env

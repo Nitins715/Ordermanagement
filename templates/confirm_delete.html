@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Delete Order</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f2f4f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .confirm-box {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .confirm-box h2 {
+      color: #dc3545;
+      margin-bottom: 25px;
+      font-size: 20px;
+    }
+
+    .button-group {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    button, .cancel-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    button:hover {
+      background-color: #c82333;
+    }
+
+    .cancel-btn {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    .cancel-btn:hover {
+      background-color: #5a6268;
+    }
+  </style>
+</head>
+<body>
+  <div class="confirm-box">
+    <h2>Are you sure you want to delete order <strong>{{ order.internal_ref_no }}</strong>?</h2>
+    <form method="POST">
+      {% csrf_token %}
+      <div class="button-group">
+        <button type="submit">Yes, Delete</button>
+        <a href="{% url 'order_list' %}" class="cancel-btn">Cancel</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>
