@@ -8,6 +8,26 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 
+import openpyxl
+from django.http import HttpResponse
+
+def export_to_excel(request):
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Data"
+
+    ws.append(['Order ID' ,'Order Date' ,'Type','Name', 'Contact', 'Skip Size', 'Qty', 'Amount', 'Payment'])
+
+    for obj in NewOrder.objects.all():
+        ws.append([obj.internal_ref_no,obj.order_date.date().strftime('%d-%m-%Y'),obj.order_type,obj.name_or_company,obj.contact_number,obj.skip_size,obj.quantity,obj.total_amount_with_vat,obj.payment_method])
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=data.xlsx'
+    wb.save(response)
+
+    return response
+
+
 def user_login(request):
     if request.method == "POST":
         form = AuthenticationForm(data=request.POST)
