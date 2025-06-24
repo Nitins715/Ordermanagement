@@ -65,7 +65,7 @@
 </head>
 <body>
   <div class="confirm-box">
-    <h2>Are you sure you want to delete order <strong>{{ order.internal_ref_no }}</strong>?</h2>
+    <h2>You are about to delete order <strong>{{ order.internal_ref_no }}</strong></h2>
     <form method="POST">
       {% csrf_token %}
       <div class="button-group">
