@@ -113,7 +113,7 @@
       <div class="button-group">
         <a href="{% url 'create_order' %}" class="action-btn">New Order +</a>
         <form action="{% url 'export-excel' %}" method="get" style="display: inline;">
-          <button type="submit" class="action-btn">Download Excel</button>
+          <button type="submit" class="action-btn">Download</button>
         </form>
         <form action="{% url 'logout' %}" method="post" style="display: inline;">
           {% csrf_token %}
